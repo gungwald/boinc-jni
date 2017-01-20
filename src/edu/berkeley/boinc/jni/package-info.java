@@ -11,4 +11,4 @@
  * </li>
  * </ol>
  */
-package edu.berkeley.boinc.api;
+package edu.berkeley.boinc.jni;

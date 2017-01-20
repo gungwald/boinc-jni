@@ -1,4 +1,4 @@
-package edu.berkeley.boinc.api;
+package edu.berkeley.boinc.jni;
 
 /**
  * Used to tell the BOINC client what kind of application is running.
