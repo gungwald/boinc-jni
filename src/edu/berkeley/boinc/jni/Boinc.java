@@ -28,6 +28,7 @@ public class Boinc implements Serializable {
     /**
      * Performs initialization with a default set of options. Can be used for
      * single-threaded applications.
+     * @throws BoincException If the native boinc function call failed
      */
     public native void init() throws BoincException;
     
@@ -37,9 +38,41 @@ public class Boinc implements Serializable {
      * 
      * @param options   Specifies configuration of application
      * 
-     * @return 0 for success or an error code
+     * @throws BoincException If the native boinc function call failed
      */
-    public native int init(ApplicationOptions options);
+    public void init(ApplicationOptions options) throws BoincException {
+        init(options.isWorkerThreadPriorityNormal(),
+                options.isMainProgram(),
+                options.isHeartbeatTimeoutCheckEnabled(),
+                options.isAutoHandleProcessControlMessagesEnabled(),
+                options.isAutoSendStatusMessagesEnabled(),
+                options.isAutoHandleCommunicationsFailureEnabled(),
+                options.isApplicationMultiThreaded(),
+                options.isApplicationMultiProcess());
+    }
+    
+    /**
+     * Flattened out version if init(options) for JNI efficiency.
+     * 
+     * @param normalThreadPriority
+     * @param mainProgram
+     * @param checkHeartbeat
+     * @param handleProcessControl
+     * @param sendStatusMessages
+     * @param directProcessAction
+     * @param multiThread
+     * @param multiProcess
+     * @throws BoincException
+     */
+    private native void init(
+            boolean normalThreadPriority, 
+            boolean mainProgram, 
+            boolean checkHeartbeat,
+            boolean handleProcessControl,
+            boolean sendStatusMessages,
+            boolean directProcessAction,
+            boolean multiThread,
+            boolean multiProcess) throws BoincException;
     
     /**
      * When the application has completed it must call this.
@@ -48,7 +81,7 @@ public class Boinc implements Serializable {
      * @param status Non-zero if an error was encountered
      * @return
      */
-    public native int finish(int status);
+    public native void finish(int status) throws BoincException;
     
     /**
      *  Alternatively, if you want to show a message to the user (e.g. because of an error condition that the user can remedy) use
@@ -58,7 +91,7 @@ public class Boinc implements Serializable {
      * @param isNotice
      * @return
      */
-    public native int finish(int status, String message, boolean isNotice);
+    public native void finish(int status, String message, boolean isNotice) throws BoincException;
     
     /**
      * Applications that use named input or output files must call this.
