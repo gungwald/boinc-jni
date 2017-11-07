@@ -15,6 +15,15 @@ public class Boinc implements Serializable {
      */
     public static Boinc SINGLETON = new Boinc();
 
+    private boolean workerThreadPriorityNormal = false;
+    private boolean mainProgram = true;
+    private boolean heartbeatEnabled = true;
+    private boolean messageHandlingEnabled = true;
+    private boolean statusReportingEnabled = true;
+    private boolean actionEnabled = true;
+    private boolean multiThreaded = false;
+    private boolean creatorOfSubprocesses = false;
+    
     private Boinc() {
         // Thwart instantiation of multiple instances.
     }
@@ -31,23 +40,12 @@ public class Boinc implements Serializable {
      * 
      * @throws BoincException If the native boinc function call failed
      */
-    public native void init() throws BoincException;
-
-    /**
-     * Performs initialization with a given set of options. Used with
-     * multi-threaded applications.
-     * 
-     * @param options Specifies configuration of application
-     * 
-     * @throws BoincException If the native boinc function call failed
-     */
-    public void init(ApplicationOptions options) throws BoincException {
-        init(options.isWorkerThreadPriorityNormal(), options.isMainProgram(), options.isHeartbeatTimeoutCheckEnabled(), options.isAutoHandleProcessControlMessagesEnabled(), options.isAutoSendStatusMessagesEnabled(),
-                options.isAutoHandleCommunicationsFailureEnabled(), options.isApplicationMultiThreaded(), options.isApplicationMultiProcess());
+    public void init() throws BoincException {
+    	init(workerThreadPriorityNormal, mainProgram, heartbeatEnabled, messageHandlingEnabled, statusReportingEnabled, actionEnabled, multiThreaded, creatorOfSubprocesses);
     }
 
     /**
-     * Flattened out version if init(options) for JNI efficiency.
+     * Private flattened out version if init(options) for JNI efficiency.
      * 
      * @param normalThreadPriority
      * @param mainProgram
